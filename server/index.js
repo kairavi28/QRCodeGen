@@ -1,6 +1,6 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
-const { initDb } = require("./db");
 const productsRouter = require("./routes/products");
 
 const app = express();
@@ -16,13 +16,15 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../qrcode-generator/build", "index.html"));
 });
 
-initDb()
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
+    console.log("Connected to MongoDB");
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("Failed to initialize database:", err);
+    console.error("Failed to connect to MongoDB:", err);
     process.exit(1);
   });
