@@ -1,4 +1,4 @@
-const API_BASE = "https://api.biomedwaste.net/api/products";
+const API_BASE = "/api/products";
 
 export async function createProduct(payload) {
   const res = await fetch(API_BASE, {

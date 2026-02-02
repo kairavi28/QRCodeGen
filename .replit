@@ -16,15 +16,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Dev Server"
+args = "Full Stack Server"
 
 [[workflows.workflow]]
-name = "React Dev Server"
+name = "Full Stack Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd qrcode-generator && PORT=5000 npm start"
+args = "node server/index.js"
 waitForPort = 5000
 
 [workflows.workflow.metadata]

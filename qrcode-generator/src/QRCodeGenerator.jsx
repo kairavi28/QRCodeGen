@@ -3,8 +3,6 @@ import { QRCodeCanvas } from "qrcode.react";
 import { Box, TextField, Typography, Paper, Button } from "@mui/material";
 import { createProduct } from "./api/products";
 
-const QR_URL = "https://service.biomedwaste.net/service-info";
-
 export default function QRCodeGenerator() {
   const [productId, setProductId] = useState(null);
   const [productName, setProductName] = useState("");
@@ -54,7 +52,8 @@ export default function QRCodeGenerator() {
 
   const generateQRCodeValue = () => {
     if (!productId) return "";
-    return `${QR_URL}/${productId}`;
+    const baseUrl = window.location.origin;
+    return `${baseUrl}/service-info/${productId}`;
   };
 
   return (
