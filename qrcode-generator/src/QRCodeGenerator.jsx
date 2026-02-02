@@ -52,8 +52,7 @@ export default function QRCodeGenerator() {
 
   const generateQRCodeValue = () => {
     if (!productId) return "";
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/service-info/${productId}`;
+    return `https://service.biomedwaste.net/service-info/${productId}`;
   };
 
   return (
@@ -87,10 +86,12 @@ export default function QRCodeGenerator() {
 
         <TextField
           label="Last Serviced"
+          type="date"
           value={lastServiced}
           onChange={(e) => setLastServiced(e.target.value)}
           fullWidth
           sx={{ mb: 2 }}
+          InputLabelProps={{ shrink: true }}
         />
 
         <TextField

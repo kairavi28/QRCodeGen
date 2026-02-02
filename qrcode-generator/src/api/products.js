@@ -22,6 +22,15 @@ export async function getProductById(id) {
   return res.json();
 }
 
+export async function searchProductsByName(name) {
+  const res = await fetch(`${API_BASE}/search?name=${encodeURIComponent(name)}`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: "Search failed" }));
+    throw new Error(error.message || "Search failed");
+  }
+  return res.json();
+}
+
 export async function addServiceRecord(id, service) {
   const res = await fetch(`${API_BASE}/${id}/service`, {
     method: "POST",

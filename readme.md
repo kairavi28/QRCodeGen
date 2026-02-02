@@ -18,7 +18,7 @@ Preferred communication style: Simple, everyday language.
 ### Full Stack Architecture
 
 - **Backend**: Node.js with Express server
-- **Database**: PostgreSQL (Replit built-in)
+- **Database**: MongoDB 
 - **Frontend**: React 19.1 with Create React App
 - **UI Library**: Material UI (MUI) v7 with Emotion for styling
 - **QR Code Generation**: qrcode.react library for rendering QR codes
@@ -114,14 +114,6 @@ The application supports full service history tracking:
 - **qrcode.react**: QR code rendering
 - **jspdf + html2canvas**: PDF generation and canvas capture
 - **react-router-dom**: Client-side routing
-
-### Environment Variables
-
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `REACT_APP_MODE` | Controls app mode (INTERNAL/EXTERNAL) | INTERNAL |
-| `DATABASE_URL` | PostgreSQL connection string | Auto-configured by Replit |
-| `PORT` | Server port | 5000 |
 
 ### Running the Application
 

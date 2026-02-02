@@ -9,6 +9,7 @@ const ServiceSchema = new mongoose.Schema({
 const ProductSchema = new mongoose.Schema({
   productName: String,
   productLink: String,
+  sku: { type: String, unique: true, default: () => `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` },
   location: {
     address: String,
     lat: Number,

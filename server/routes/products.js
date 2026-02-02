@@ -12,6 +12,22 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/search", async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ message: "Product name is required" });
+    }
+    const products = await Product.find({
+      productName: { $regex: name, $options: "i" }
+    }).limit(10);
+    res.json(products);
+  } catch (error) {
+    console.error("Error searching products:", error);
+    res.status(500).json({ message: "Failed to search products" });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

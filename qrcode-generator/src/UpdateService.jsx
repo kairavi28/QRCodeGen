@@ -1,44 +1,51 @@
 import React, { useState } from "react";
-import { Box, TextField, Typography, Paper, Button, Alert, CircularProgress } from "@mui/material";
-import { addServiceRecord, getProductById } from "./api/products";
+import { Box, TextField, Typography, Paper, Button, Alert, CircularProgress, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { addServiceRecord, getProductById, searchProductsByName } from "./api/products";
 
 export default function UpdateService() {
-  const [productId, setProductId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [productInfo, setProductInfo] = useState(null);
   const [servicedBy, setServicedBy] = useState("");
   const [servicedOn, setServicedOn] = useState("");
   const [loading, setLoading] = useState(false);
-  const [lookupLoading, setLookupLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const handleLookup = async () => {
-    if (!productId.trim()) {
-      setMessage({ type: "error", text: "Please enter a product ID" });
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      setMessage({ type: "error", text: "Please enter a product name" });
       return;
     }
 
-    setLookupLoading(true);
+    setSearchLoading(true);
     setMessage({ type: "", text: "" });
+    setSearchResults([]);
     setProductInfo(null);
 
     try {
-      const product = await getProductById(productId.trim());
-      if (product && product._id) {
-        setProductInfo(product);
-        setMessage({ type: "success", text: `Found product: ${product.productName}` });
+      const results = await searchProductsByName(searchQuery.trim());
+      if (results.length === 0) {
+        setMessage({ type: "warning", text: "No products found" });
       } else {
-        setMessage({ type: "error", text: "Product not found" });
+        setSearchResults(results);
       }
     } catch (err) {
-      setMessage({ type: "error", text: "Failed to lookup product" });
+      setMessage({ type: "error", text: "Failed to search products" });
     } finally {
-      setLookupLoading(false);
+      setSearchLoading(false);
     }
+  };
+
+  const handleSelectProduct = (product) => {
+    setProductInfo(product);
+    setSearchResults([]);
+    setMessage({ type: "success", text: `Selected: ${product.productName}` });
   };
 
   const handleSubmit = async () => {
     if (!productInfo) {
-      setMessage({ type: "error", text: "Please lookup a product first" });
+      setMessage({ type: "error", text: "Please select a product first" });
       return;
     }
 
@@ -70,11 +77,22 @@ export default function UpdateService() {
   };
 
   const handleClear = () => {
-    setProductId("");
+    setSearchQuery("");
+    setSearchResults([]);
     setProductInfo(null);
     setServicedBy("");
     setServicedOn("");
     setMessage({ type: "", text: "" });
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? dateString : date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
   };
 
   return (
@@ -104,23 +122,45 @@ export default function UpdateService() {
           </Alert>
         )}
 
-        <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-          <TextField
-            label="Product ID"
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
-            fullWidth
-            placeholder="Enter product ID from QR code"
-          />
-          <Button
-            variant="outlined"
-            onClick={handleLookup}
-            disabled={lookupLoading}
-            sx={{ minWidth: 100 }}
-          >
-            {lookupLoading ? <CircularProgress size={24} /> : "Lookup"}
-          </Button>
-        </Box>
+        {!productInfo && (
+          <>
+            <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+              <TextField
+                label="Search by Product Name"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+                placeholder="Type product name..."
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+              />
+              <Button
+                variant="outlined"
+                onClick={handleSearch}
+                disabled={searchLoading}
+                sx={{ minWidth: 100 }}
+              >
+                {searchLoading ? <CircularProgress size={24} /> : "Search"}
+              </Button>
+            </Box>
+
+            {searchResults.length > 0 && (
+              <Paper variant="outlined" sx={{ mb: 2, maxHeight: 200, overflow: "auto" }}>
+                <List dense>
+                  {searchResults.map((product) => (
+                    <ListItem key={product._id} disablePadding>
+                      <ListItemButton onClick={() => handleSelectProduct(product)}>
+                        <ListItemText
+                          primary={product.productName}
+                          secondary={product.location?.address || "No location"}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
+          </>
+        )}
 
         {productInfo && (
           <Box sx={{ mb: 3, p: 2, bgcolor: "#e8f5e9", borderRadius: 2 }}>
@@ -133,6 +173,21 @@ export default function UpdateService() {
             <Typography variant="body2" color="text.secondary">
               Total Services: {productInfo.serviceHistory?.length || 0}
             </Typography>
+            {productInfo.serviceHistory?.length > 0 && (
+              <Typography variant="body2" color="text.secondary">
+                Last Service: {formatDate(productInfo.serviceHistory[productInfo.serviceHistory.length - 1]?.servicedOn)}
+              </Typography>
+            )}
+            <Button
+              size="small"
+              onClick={() => {
+                setProductInfo(null);
+                setSearchQuery("");
+              }}
+              sx={{ mt: 1 }}
+            >
+              Change Product
+            </Button>
           </Box>
         )}
 

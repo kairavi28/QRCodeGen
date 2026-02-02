@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./HomePage";
 import QRCodeGenerator from "./QRCodeGenerator";
 import ServiceInfoPage from "./ServiceInfoPage";
 import UpdateService from "./UpdateService";
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         {mode === "INTERNAL" ? (
           <>
-            <Route path="/" element={<QRCodeGenerator />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/generate" element={<QRCodeGenerator />} />
             <Route path="/update-service" element={<UpdateService />} />
             <Route path="/service-info/:productId" element={<ServiceInfoPage />} />
             <Route path="/service-info" element={<ServiceInfoPage />} />
