@@ -28,11 +28,20 @@ Preferred communication style: Simple, everyday language.
 ```
 src/
 ├── App.js              # Main router with mode-based routing
-├── QRCodeGenerator.js  # Internal QR code creation interface
-├── ServiceInfoPage.js  # Product service information display
+├── QRCodeGenerator.jsx # Internal QR code creation interface
+├── ServiceInfoPage.jsx # Product service information display
+├── UpdateService.jsx   # Add new service records to existing products
 └── api/
     └── products.js     # API client for backend communication
 ```
+
+### Internal Pages
+
+| Route | Purpose |
+|-------|---------|
+| `/` | QR Code Generator - create new products and generate QR codes |
+| `/update-service` | Update Service History - add new service records to existing products |
+| `/service-info/:id` | Service Info Page - view product details and service history |
 
 ### Mode-Based Routing
 
